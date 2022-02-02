@@ -1,34 +1,35 @@
 const Sauce = require('../models/sauce')
+const helmet = require("helmet");
 const fs = require('fs');
 
 exports.createSauce = (req, res, next) => {
   const sauceObject = JSON.parse(req.body.sauce);
   delete sauceObject._id;
-  const sauce = new Sauce({
+  const sauce = new Sauce({ // création d'une sauce 
     ...sauceObject,
     likes: 0,
     dislikes: 0,
     userLiked: [],
     userDisliked: [],
-    imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
+    imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}` // création de l'URL d'image afin de les affichr
   });
-  sauce.save()
+  sauce.save() // sauvegarder une sauce
   .then(() => res.status(201).json({ message: 'Sauce enregistrée'}))
   .catch(error => res.status(400).json({error}));
 };
 
 exports.likesAndDislikes = (req, res, next) => {
-  const like = parseInt(req.body.like);
-  switch (like) {
+  const like = parseInt(req.body.like); // on parse le like recupéré dans notre body pour pouvoir le lire
+  switch (like) { // on compare chaque like à un cas et on éxecute
       case 0:
           Sauce.findOne({ _id: req.params.id })
               .then((sauce) => {
-                  if (sauce.usersLiked.includes(req.body.userId)) {
-                      sauce.usersLiked.splice(req.body.userId, 1)
+                  if (sauce.usersLiked.includes(req.body.userId)) { // cet ID d'utilisateur a déjà liké
+                      sauce.usersLiked.splice(req.body.userId, 1) 
                       sauce.likes--;
                       Sauce.updateOne({ _id: req.params.id }, { likes: sauce.likes, usersLiked: sauce.usersLiked })
                           .then(() => {
-                              res.status(201).json({ message: 'Like removed' })
+                              res.status(201).json({ message: 'Like supprimé' })
                           })
                           .catch((err) => {
                               res.status(400).json({ err })
@@ -39,7 +40,7 @@ exports.likesAndDislikes = (req, res, next) => {
                       sauce.dislikes--;
                       Sauce.updateOne({ _id: req.params.id }, { dislikes: sauce.dislikes, usersDisliked: sauce.usersDisliked })
                           .then(() => {
-                              res.status(201).json({ message: 'Dislike removed' })
+                              res.status(201).json({ message: 'Dislike supprimé' })
                           })
                           .catch((err) => {
                               res.status(400).json({ err })
@@ -55,7 +56,7 @@ exports.likesAndDislikes = (req, res, next) => {
                   sauce.usersLiked.push(req.body.userId)
                   Sauce.updateOne({ _id: req.params.id }, { likes: sauce.likes, usersLiked: sauce.usersLiked })
                       .then(() => {
-                          res.status(201).json({ message: 'Liked' })
+                          res.status(201).json({ message: 'Like ajouté' })
                       })
                       .catch((err) => {
                           res.status(400).json({ err })
@@ -70,7 +71,7 @@ exports.likesAndDislikes = (req, res, next) => {
                   sauce.usersDisliked.push(req.body.userId)
                   Sauce.updateOne({ _id: req.params.id }, { dislikes: sauce.dislikes, usersDisliked: sauce.usersDisliked })
                       .then(() => {
-                          res.status(201).json({ message: 'Disliked' })
+                          res.status(201).json({ message: 'Disliked ajouté' })
                       })
                       .catch((err) => {
                           res.status(400).json({ err })
@@ -79,7 +80,7 @@ exports.likesAndDislikes = (req, res, next) => {
               .catch((err) => res.status(500).json({ err }))
           break;
       default:
-          console.log("La variable est supérieur ou inférieur au controller");
+          console.log("La variable est supérieure ou inférieure au controller");
   }
 }
 

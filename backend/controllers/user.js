@@ -1,4 +1,5 @@
-const bcrypt = require('bcrypt')
+const bcrypt = require('bcrypt');
+const cryptojs = require('crypto-js');
 const User = require('../models/user');
 const jwt = require('jsonwebtoken'); 
 
@@ -6,9 +7,10 @@ exports.signup = (req, res, next) => {
     bcrypt.hash(req.body.password, 10) // on récupère le MDP et on le hash
     .then(hash => {
       const user = new User({ // on créé un nouvel utilisateur avec un l'email unique et le MDP qui a été hashé
-        email: req.body.email, 
+        email: cryptojs.HmacSHA256(req.body.email, 'EMAIL_KEY').toString(),
         password: hash
       });
+      console.log(user)
       user.save() // on l'enregistre
         .then(() => res.status(201).json({ message: 'Utilisateur créé !' }))
         .catch(error => res.status(400).json({ error }));
@@ -18,7 +20,7 @@ exports.signup = (req, res, next) => {
 
 exports.login = (req, res, next) => {
   console.log(req.body)
-  User.findOne({ email: req.body.email }) // findOne permet de trouver un seul utilisateur dans la base de données
+  User.findOne({ email: cryptojs.HmacSHA256(req.body.email, 'EMAIL_KEY').toString() }) // findOne permet de trouver un seul utilisateur dans la base de données
     .then(user => {
       if (!user) { // si utilisateur différent alors = utilisateur non trouvé
         return res.status(401).json({ error: 'Utilisateur non trouvé !' });
@@ -40,4 +42,4 @@ exports.login = (req, res, next) => {
         .catch(error => res.status(500).json({ error }));
     })
     .catch(error => res.status(500).json({ error }));
-};
+  };

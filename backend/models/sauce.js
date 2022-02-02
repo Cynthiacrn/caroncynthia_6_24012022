@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const sauceSchema = mongoose.Schema({
+const sauceSchema = mongoose.Schema({ // création d'un schéma mongoose pour les sauces
     userId: {type: String, required : true},
     name: {type: String, required: true},
     manufacturer: {type: String, required: true},
@@ -10,7 +10,7 @@ const sauceSchema = mongoose.Schema({
     heat: {type: Number, required: true},
     likes: {type: Number, required:true},
     dislikes: {type: Number, required: true},
-    usersLiked: {type: ["String <userId>"], required: true},
+    usersLiked: {type: ["String <userId>"], required: true}, 
     usersDisliked: {type: ["String <userId>"], required: true},
 })
 
