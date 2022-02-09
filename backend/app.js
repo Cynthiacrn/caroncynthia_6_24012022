@@ -1,7 +1,6 @@
 
-const express = require('express'); 
-const helmet = require("helmet");
-const morgan = require('morgan');
+const express = require('express'); // Permet de faire fonctionner l'app
+const helmet = require("helmet"); // Permet la sécurité en protégeant l'application de certaines vulnérabilités
 const mongoose = require('mongoose');
 const path = require('path');
 const dotenv = require('dotenv').config()
@@ -19,14 +18,17 @@ mongoose.connect(process.env.MONGO_URL,
   .catch(() => console.log('Connexion à MongoDB échouée !'));
 
 const app = express();
+// Transforme les données arrivant de la requête POST en un objet JSON facilement exploitable
 app.use(express.json());
-app.use(morgan('dev'));
 app.use(helmet.crossOriginEmbedderPolicy({policy: 'cross-origin'}));
 
 app.use((req, res, next) => {
+  // on indique que les ressources peuvent être partagées depuis n'importe quelle origine
 	res.setHeader('Access-Control-Allow-Origin', '*');
+  // on indique les entêtes qui seront utilisées après la pré-vérification cross-origin afin de donner l'autorisation
 	res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content, Accept, Content-Type, Authorization');
-	res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
+	 // on indique les méthodes autorisées pour les requêtes HTTP
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
 	next();
 })
 
