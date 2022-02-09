@@ -8,7 +8,7 @@ const dotenv = require('dotenv').config()
 const sauceRoutes = require('./routes/sauce');
 const userRoutes = require('./routes/user');
 
-const { timing } = require('npmlog'); // module qui fait des log basics
+const { timing } = require('npmlog'); // module qui fait des log basics  
 
 
 mongoose.connect(process.env.MONGO_URL,
