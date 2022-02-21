@@ -121,7 +121,9 @@ exports.modifySauce = (req, res, next) => {
 
 // Supprimer une sauce = DELETE
 exports.deleteSauce = (req, res, next) => {
+    console.log(req.body)
   Sauce.findOne({ _id: req.params.id})
+
   .then(sauce => {
     // Pour extraire ce fichier, on récupère l'url de la sauce, et on le split autour de la chaine de caractères
     const filename = sauce.imageUrl.split('/images/')[1];
